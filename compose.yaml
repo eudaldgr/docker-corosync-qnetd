@@ -1,0 +1,30 @@
+---
+services:
+  init:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM docker.io/alpine
+        RUN set -ex; \
+          apk --no-cache --update add \
+            nss-tools nss nspr procps-ng sqlite-libs zlib;
+        COPY entrypoint.sh /entrypoint.sh
+        RUN set -ex; \
+          chmod +x /entrypoint.sh
+        ENTRYPOINT ["/entrypoint.sh"]
+    container_name: corosync_init_1
+    volumes:
+      - ./qnetd:/etc/corosync/qnetd
+    restart: "no"
+
+  qnetd:
+    image: ghcr.io/eudaldgr/corosync-qnetd:latest
+    container_name: corosync_qnetd_1
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - ./qnetd:/etc/corosync/qnetd
+    ports:
+      - "5403:5403"
+    restart: unless-stopped
