@@ -45,7 +45,7 @@ jobs:
         run: |
           set -euo pipefail
           TAG="${{ steps.version.outputs.version }}"
-          TAGS_JSON="$(curl -fsSL -H "Authorization: Bearer ${{ steps.ghcr.outputs.token }}" "https://ghcr.io/v2/${{ github.repository_owner }}/corosync-qnetd/tags/list")"
+          TAGS_JSON="$(curl -fsSL -H "Authorization: Bearer ${{ steps.ghcr.outputs.token }}" "https://ghcr.io/v2/${{ github.repository_owner }}/corosync-qnetd/tags/list" || true)"
           if echo "${TAGS_JSON}" | jq -e --arg t "${TAG}" '.tags | index($t) != null' > /dev/null; then
             echo "needs_build=false" >> "$GITHUB_OUTPUT"
           else
