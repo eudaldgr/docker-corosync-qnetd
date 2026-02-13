@@ -70,6 +70,8 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --file Dockerfile \
+            --build-arg APP_IMAGE=${{ github.repository_owner }}/corosync-qnetd \
+            --build-arg APP_NAME=corosync-qnetd \
             --build-arg APP_ROOT=/scratchless \
             --build-arg APP_VERSION=${{ steps.version.outputs.version }} \
             --cache-from type=registry,ref=ghcr.io/${{ github.repository_owner }}/corosync-qnetd:buildcache \
